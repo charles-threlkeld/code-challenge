@@ -19,6 +19,10 @@ class AddressParse(APIView):
         return Response({})
 
     def parse(self, address):
-        # TODO: Implement this method to return the parsed components of a
-        # given address using usaddress: https://github.com/datamade/usaddress
+        try:
+            # We'll let our library to the heavy lifting here
+            address_components, address_type = usaddress.tag(address)
+        except RepeatedLabelError:
+            # TODO: propagate this error?
+            pass
         return address_components, address_type
