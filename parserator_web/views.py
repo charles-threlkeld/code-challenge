@@ -23,9 +23,13 @@ class AddressParse(APIView):
             return Response({"input_string": input_string,
                              "address_components": address_components,
                              "address_type": address_type})
-        except usaddress.RepeatedLabelError:
+        except ParseError:
             return Response({"error": "This address failed to parse"}, status=400)
 
     def parse(self, address):
         # We'll let our library to the heavy lifting here
-        return usaddress.tag(address)
+        # And we'll re-throw the usaddress exception as a ParseError
+        try:
+            return usaddress.tag(address)
+        except usaddress.RepeatedLabelError:
+            raise ParseError
