@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_api_parse_succeeds(client):
     # We're going to test just the status code and json of the response
     # Testing of e.g., templates or contexts should be done elsewhere
