@@ -14,15 +14,15 @@ class AddressParse(APIView):
     renderer_classes = [JSONRenderer]
 
     def get(self, request):
-        # TODO: Flesh out this method to parse an address string using the
-        # parse() method and return the parsed components to the frontend.
-        return Response({})
+        input_string = request.GET.get("address")
+        try:
+            address_components, address_type = parse(input_string)
+            return Response({"input_string": input_string,
+                             "address_components": address_components,
+                             "address_type": address_type})
+        except usaddress.RepeatedLabelError:
+            return Response({})
 
     def parse(self, address):
-        try:
-            # We'll let our library to the heavy lifting here
-            address_components, address_type = usaddress.tag(address)
-        except RepeatedLabelError:
-            # TODO: propagate this error?
-            pass
-        return address_components, address_type
+        # We'll let our library to the heavy lifting here
+        return usaddress.tag(address)
