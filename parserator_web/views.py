@@ -16,12 +16,15 @@ class AddressParse(APIView):
     def get(self, request):
         input_string = request.GET.get("address")
         try:
-            address_components, address_type = parse(input_string)
+            components, address_type = self.parse(input_string)
+            address_components = []
+            for comp in components:
+                address_components.append((comp, components[comp]))
             return Response({"input_string": input_string,
                              "address_components": address_components,
                              "address_type": address_type})
         except usaddress.RepeatedLabelError:
-            return Response({})
+            return Response({"error": "This address failed to parse"}, status=400)
 
     def parse(self, address):
         # We'll let our library to the heavy lifting here
